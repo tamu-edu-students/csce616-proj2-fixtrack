@@ -91,6 +91,27 @@ RSpec.describe EquipmentController, type: :controller do
       expect(response.body).not_to include("Remove equipment")
     end
 
+    context "as a reporter" do
+      before { allow(controller).to receive(:current_user).and_return(double(manager?: false)) }
+
+      it "forbids direct equipment changes without changing data" do
+        item
+        before_data = Equipment.order(:id).map(&:attributes)
+
+        post :create, params: { equipment: attributes.merge(name: "Unauthorized") }
+        expect(response).to have_http_status(:forbidden)
+        expect(Equipment.order(:id).map(&:attributes)).to eq(before_data)
+
+        patch :update, params: { id: item.id, equipment: { name: "Unauthorized" } }
+        expect(response).to have_http_status(:forbidden)
+        expect(Equipment.order(:id).map(&:attributes)).to eq(before_data)
+
+        delete :destroy, params: { id: item.id }
+        expect(response).to have_http_status(:forbidden)
+        expect(Equipment.order(:id).map(&:attributes)).to eq(before_data)
+      end
+    end
+
     [ :new, :edit, :confirm_destroy ].each do |action|
       it "forbids the #{action} page" do
         get action, params: { id: item.id }

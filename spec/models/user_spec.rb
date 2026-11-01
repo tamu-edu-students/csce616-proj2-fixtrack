@@ -44,5 +44,24 @@ RSpec.describe User, type: :model do
 
       expect(user).not_to be_valid
     end
+
+    it 'allows the reporter role' do
+      user = User.new(
+        name: 'Clark Kent',
+        email: 'superman@example.com',
+        password: 'password123',
+        role: 'reporter'
+      )
+
+      expect(user).to be_valid
+    end
+  end
+
+  describe '#manager?' do
+    it 'returns true for managers only' do
+      expect(User.new(role: 'manager')).to be_manager
+      expect(User.new(role: 'technician')).not_to be_manager
+      expect(User.new(role: 'reporter')).not_to be_manager
+    end
   end
 end
