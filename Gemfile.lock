@@ -132,6 +132,10 @@ GEM
       cucumber (>= 7, < 12)
       railties (>= 6.1, < 9)
     cucumber-tag-expressions (8.1.0)
+    database_cleaner-active_record (2.2.2)
+      activerecord (>= 5.a)
+      database_cleaner-core (~> 2.0)
+    database_cleaner-core (2.1.0)
     date (3.6.0)
     debug (1.11.1)
       irb (~> 1.10)
@@ -426,6 +430,7 @@ DEPENDENCIES
   brakeman
   bundler-audit
   cucumber-rails (~> 4.1)
+  database_cleaner-active_record (~> 2.2)
   debug
   devise (~> 5.0)
   image_processing (~> 1.2)
@@ -482,6 +487,8 @@ CHECKSUMS
   cucumber-messages (32.3.1) sha256=ddc88e4c1cf7afb96c06005b92a4a6f221a2fa435a8b4ca04677d215fd82771c
   cucumber-rails (4.1.0) sha256=43538dddc133e79c3763ef11287f2163ea9bfd72fb2fbe782b4b7db91d8ad621
   cucumber-tag-expressions (8.1.0) sha256=9bd8c4b6654f8e5bf2a9c99329b6f32136a75e50cd39d4cfb3927d0fa9f52e21
+  database_cleaner-active_record (2.2.2) sha256=88296b9f3088c31f7c0d4fcec10f68e4b71c96698043916de59b04debec10388
+  database_cleaner-core (2.1.0) sha256=b2875266d9b26b716e8b669c883e01c5250839f6f2ec56422b5e79aa97fb6927
   date (3.6.0) sha256=18ac945c4e24ebd93534f8eab8c2fd8c5604b3e977105b3798d62a1e8d27b580
   debug (1.11.1) sha256=2e0b0ac6119f2207a6f8ac7d4a73ca8eb4e440f64da0a3136c30343146e952b6
   devise (5.0.4) sha256=d605f2b85854e74e56ee789e2d398702bc2d06e6bcd894717a670a3199c74cc1

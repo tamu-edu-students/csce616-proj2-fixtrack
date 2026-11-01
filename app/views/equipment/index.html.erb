@@ -1,0 +1,23 @@
+<h1>Equipment</h1>
+<%= render "messages" %>
+<% if current_user.manager? %>
+  <p><%= link_to "Add equipment", new_equipment_path %></p>
+<% end %>
+<% if @equipment.empty? %>
+  <p>No equipment has been registered.</p>
+<% else %>
+  <table>
+    <caption>Registered equipment and current status</caption>
+    <thead><tr><th scope="col">Name</th><th scope="col">Asset identifier</th><th scope="col">Location</th><th scope="col">Status</th></tr></thead>
+    <tbody>
+      <% @equipment.each do |item| %>
+        <tr>
+          <td><%= link_to item.name, equipment_path(item) %></td>
+          <td><%= item.asset_identifier %></td>
+          <td><%= item.location %></td>
+          <td><%= item.status %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

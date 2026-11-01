@@ -1,5 +1,11 @@
 # User Guide
 
+## Equipment management
+
+See [Equipment management](equipment-management.md) for the draft CRUD workflow,
+permissions, proposed statuses and authentication integration requirements.
+This feature remains a development draft until its dependencies are integrated.
+
 > **Status:** Placeholder. Add screenshots and verified workflows after the
 > corresponding features are implemented.
 

@@ -11,6 +11,34 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[8.1].define(version: 2026_10_29_040923) do
+  create_table "equipment", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "asset_identifier", null: false
+    t.text "description"
+    t.string "location", null: false
+    t.string "status", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.date "manufacture_date"
+    t.text "specifications"
+    t.index ["asset_identifier"], name: "index_equipment_on_asset_identifier", unique: true
+  end
+
+  create_table "maintenance_tickets", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "description", null: false
+    t.string "priority", null: false
+    t.string "status", default: "open", null: false
+    t.integer "equipment_id", null: false
+    t.integer "reporter_id", null: false
+    t.integer "assigned_technician_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assigned_technician_id"], name: "index_maintenance_tickets_on_assigned_technician_id"
+    t.index ["equipment_id"], name: "index_maintenance_tickets_on_equipment_id"
+    t.index ["reporter_id"], name: "index_maintenance_tickets_on_reporter_id"
+  end
+
   create_table "companies", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -34,4 +62,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_040923) do
   end
 
   add_foreign_key "users", "companies"
+  add_foreign_key "maintenance_tickets", "equipment"
+  add_foreign_key "maintenance_tickets", "users", column: "assigned_technician_id"
+  add_foreign_key "maintenance_tickets", "users", column: "reporter_id"
 end

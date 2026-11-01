@@ -1,0 +1,36 @@
+<h1><%= @equipment.name %></h1>
+
+<%= render "messages" %>
+
+<dl>
+  <dt>Asset identifier</dt>
+  <dd><%= @equipment.asset_identifier %></dd>
+
+  <dt>Description</dt>
+  <dd><%= @equipment.description.presence || "No description provided." %></dd>
+
+  <dt>Location</dt>
+  <dd><%= @equipment.location %></dd>
+
+  <dt>Status</dt>
+  <dd><%= @equipment.status %></dd>
+
+  <dt>Manufacture date</dt>
+  <dd><%= @equipment.manufacture_date&.iso8601 || "Not provided." %></dd>
+
+  <dt>Specifications</dt>
+  <dd>
+    <% if @equipment.specifications.present? %>
+      <%= simple_format(@equipment.specifications) %>
+    <% else %>
+      Not provided.
+    <% end %>
+  </dd>
+</dl>
+
+<p><%= link_to "All equipment", equipment_index_path %></p>
+
+<% if current_user.manager? %>
+  <p><%= link_to "Edit equipment", edit_equipment_path(@equipment) %></p>
+  <p><%= link_to "Remove equipment", confirm_destroy_equipment_path(@equipment) %></p>
+<% end %>
