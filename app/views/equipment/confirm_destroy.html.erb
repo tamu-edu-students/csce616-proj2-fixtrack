@@ -1,0 +1,5 @@
+<h1>Remove equipment</h1>
+<p>Are you sure you want to remove <strong><%= @equipment.name %></strong> (<%= @equipment.asset_identifier %>)?</p>
+<p>This action cannot be undone.</p>
+<%= button_to "Confirm removal", equipment_path(@equipment), method: :delete, data: { turbo: false } %>
+<p><%= link_to "Cancel", equipment_path(@equipment) %></p>

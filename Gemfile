@@ -57,6 +57,7 @@ gem "rspec-rails", "~> 8.0", groups: [ :development, :test ]
 gem "cucumber-rails", "~> 4.1", groups: [ :development, :test ]
 
 gem "simplecov", "~> 1.3", group: :test
+gem "database_cleaner-active_record", "~> 2.2", group: :test, require: "database_cleaner/active_record"
 
 gem "devise", "~> 5.0"
 

@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  resources :equipment do
+    get :confirm_destroy, on: :member
+  end
+
+  devise_for :users
   resources :maintenance_tickets, only: %i[new create show]
 
   namespace :manager do

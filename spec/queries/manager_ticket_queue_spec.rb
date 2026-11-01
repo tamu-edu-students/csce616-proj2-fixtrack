@@ -18,11 +18,12 @@ module ManagerTicketQueueSpec
     self.table_name = "queue_equipment"
   end
 
+  # These query fixtures isolate SQL behavior from production model validations.
   class Ticket < Record
     self.table_name = "tickets"
 
-    belongs_to :equipment, class_name: "ManagerTicketQueueSpec::Equipment"
-    belongs_to :reporter, class_name: "ManagerTicketQueueSpec::User"
+    belongs_to :equipment, class_name: "ManagerTicketQueueSpec::Equipment", optional: true
+    belongs_to :reporter, class_name: "ManagerTicketQueueSpec::User", optional: true
     belongs_to :assigned_technician, class_name: "ManagerTicketQueueSpec::User", optional: true
   end
 end
