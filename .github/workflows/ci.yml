@@ -6,6 +6,27 @@ on:
     branches: [ main ]
 
 jobs:
+  manager_queue_tests:
+    name: Manager queue isolated tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Run manager queue isolated tests
+        run: >-
+          bundle exec rspec
+          spec/policies/manager_ticket_queue_policy_spec.rb
+          spec/queries/manager_ticket_queue_spec.rb
+          spec/controllers/manager/maintenance_tickets_controller_spec.rb
+          spec/helpers/application_helper_spec.rb
+
   scan_ruby:
     runs-on: ubuntu-latest
 
