@@ -1,6 +1,10 @@
 class MaintenanceTicketsController < ApplicationController
   before_action :authenticate_user!
 
+  def index
+    @maintenance_tickets = MaintenanceTicket.order(created_at: :desc)
+  end
+
   def new
     @maintenance_ticket = MaintenanceTicket.new
   end

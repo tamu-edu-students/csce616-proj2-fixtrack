@@ -12,7 +12,9 @@ RSpec.describe EquipmentController, type: :controller do
     controller.define_singleton_method(:authenticate_user!) { }
     controller.define_singleton_method(:current_user) { }
     controller.class.helper_method :current_user
-    allow(controller).to receive(:current_user).and_return(double(manager?: true))
+    allow(controller).to receive(:current_user).and_return(
+      double(manager?: true, name: "Test Manager", role: "manager")
+    )
   end
 
   it "creates and reloads valid equipment" do
@@ -78,7 +80,11 @@ RSpec.describe EquipmentController, type: :controller do
   end
 
   context "as a technician" do
-    before { allow(controller).to receive(:current_user).and_return(double(manager?: false)) }
+    before do
+      allow(controller).to receive(:current_user).and_return(
+        double(manager?: false, name: "Test Technician", role: "technician")
+      )
+    end
 
     it "allows listing and viewing equipment without modification links" do
       item
@@ -92,7 +98,11 @@ RSpec.describe EquipmentController, type: :controller do
     end
 
     context "as a reporter" do
-      before { allow(controller).to receive(:current_user).and_return(double(manager?: false)) }
+      before do
+        allow(controller).to receive(:current_user).and_return(
+          double(manager?: false, name: "Test Reporter", role: "reporter")
+        )
+      end
 
       it "forbids direct equipment changes without changing data" do
         item
@@ -170,7 +180,7 @@ RSpec.describe EquipmentController, type: :controller do
     it "allows technicians to read record details without edit controls" do
       item.update!(record_details)
       allow(controller).to receive(:current_user)
-        .and_return(double(manager?: false))
+        .and_return(double(manager?: false, name: "Test Technician", role: "technician"))
 
       get :show, params: { id: item.id }
 
@@ -184,7 +194,7 @@ RSpec.describe EquipmentController, type: :controller do
     it "prevents technicians from changing record details" do
       item.update!(record_details)
       allow(controller).to receive(:current_user)
-        .and_return(double(manager?: false))
+        .and_return(double(manager?: false, name: "Test Technician", role: "technician"))
 
       patch :update, params: {
         id: item.id,

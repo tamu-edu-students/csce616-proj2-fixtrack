@@ -1,0 +1,31 @@
+<h1>Issues</h1>
+
+<% if @maintenance_tickets.empty? %>
+  <p>No issues have been reported.</p>
+<% else %>
+  <table>
+    <caption>Reported equipment issues</caption>
+    <thead>
+      <tr>
+        <th scope="col">Title</th>
+        <th scope="col">Equipment</th>
+        <th scope="col">Priority</th>
+        <th scope="col">Status</th>
+        <th scope="col">Reported by</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @maintenance_tickets.each do |ticket| %>
+        <tr>
+          <td><%= link_to ticket.title, maintenance_ticket_path(ticket) %></td>
+          <td><%= ticket.equipment.name %></td>
+          <td><%= ticket.priority.humanize %></td>
+          <td><%= ticket.status.humanize %></td>
+          <td><%= ticket.reporter.name %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<p><%= link_to "Report an equipment problem", new_maintenance_ticket_path %></p>
