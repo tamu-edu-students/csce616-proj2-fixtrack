@@ -24,6 +24,21 @@
   </head>
 
   <body>
+    <% if user_signed_in? %>
+      <header>
+        <nav aria-label="Main navigation">
+          <strong>FixTrack</strong>
+          <%= link_to "Issues", maintenance_tickets_path %>
+          <%= link_to "Equipment", equipment_index_path %>
+          <%= link_to "Report a problem", new_maintenance_ticket_path %>
+          <span>
+            Signed in as <strong><%= current_user.name %></strong>
+            (<%= current_user.role.humanize %>)
+          </span>
+          <%= button_to "Log out", destroy_user_session_path, method: :delete %>
+        </nav>
+      </header>
+    <% end %>
     <%= yield %>
   </body>
 </html>

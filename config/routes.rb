@@ -1,10 +1,12 @@
 Rails.application.routes.draw do
+  root "maintenance_tickets#index"
+
   resources :equipment do
     get :confirm_destroy, on: :member
   end
 
   devise_for :users
-  resources :maintenance_tickets, only: %i[new create show]
+  resources :maintenance_tickets, path: "issues", only: %i[index new create show]
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

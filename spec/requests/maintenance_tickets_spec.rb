@@ -2,6 +2,15 @@ require 'rails_helper'
 
 RSpec.describe "MaintenanceTickets", type: :request do
   describe "GET /index" do
-    pending "add some examples (or delete) #{__FILE__}"
+    before do
+      allow_any_instance_of(MaintenanceTicketsController).to receive(:authenticate_user!)
+    end
+
+    it "shows the issues landing page" do
+      get "/issues"
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("Issues", "No issues have been reported.")
+    end
   end
 end

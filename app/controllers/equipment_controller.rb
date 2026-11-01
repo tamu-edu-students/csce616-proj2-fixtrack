@@ -1,6 +1,6 @@
 class EquipmentController < ApplicationController
   before_action :authenticate_user!
-  before_action :require_equipment_manager!, except: [ :index, :show ]
+  before_action :require_manager!, except: [ :index, :show ]
   before_action :set_equipment, only: [ :show, :edit, :update, :confirm_destroy, :destroy ]
 
   rescue_from ActiveRecord::RecordNotFound do
@@ -56,11 +56,7 @@ class EquipmentController < ApplicationController
     @equipment = Equipment.find(params[:id])
   end
 
-  def require_equipment_manager!
-    head :forbidden unless current_user&.manager?
-  end
-
-    def equipment_params
+  def equipment_params
     params.require(:equipment).permit(
       :name,
       :asset_identifier,
