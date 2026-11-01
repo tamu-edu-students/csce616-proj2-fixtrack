@@ -1,0 +1,44 @@
+
+<h1>Maintenance Ticket Details</h1>
+
+<p>
+  <strong>Ticket ID:</strong>
+  <%= @maintenance_ticket.id %>
+</p>
+
+<p>
+  <strong>Equipment:</strong>
+  <%= @maintenance_ticket.equipment.name %>
+</p>
+
+<p>
+  <strong>Title:</strong>
+  <%= @maintenance_ticket.title %>
+</p>
+
+<p>
+  <strong>Problem Description:</strong>
+  <%= @maintenance_ticket.description %>
+</p>
+
+<p>
+  <strong>Priority:</strong>
+  <%= @maintenance_ticket.priority.humanize %>
+</p>
+
+<p>
+  <strong>Status:</strong>
+  <%= @maintenance_ticket.status.humanize %>
+</p>
+
+<p>
+  <strong>Reported By:</strong>
+  <%= @maintenance_ticket.reporter.name %>
+</p>
+
+<p>
+  <strong>Reported At:</strong>
+  <%= @maintenance_ticket.created_at.strftime("%B %d, %Y %I:%M %p") %>
+</p>
+
+<%= link_to "Report Another Problem", new_maintenance_ticket_path %>

@@ -1,0 +1,45 @@
+
+<h1>Report an Equipment Problem</h1>
+
+<% if @maintenance_ticket.errors.any? %>
+  <div role="alert">
+    <h2>Please correct the following errors:</h2>
+    <ul>
+      <% @maintenance_ticket.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_with model: @maintenance_ticket do |form| %>
+  <div>
+    <%= form.label :equipment_id, "Equipment" %>
+    <%= form.collection_select :equipment_id,
+        Equipment.order(:name), :id, :name,
+        { prompt: "Select equipment" },
+        { required: true } %>
+  </div>
+
+  <div>
+    <%= form.label :title, "Problem Title" %>
+    <%= form.text_field :title, required: true %>
+  </div>
+
+  <div>
+    <%= form.label :description, "Problem Description" %>
+    <%= form.text_area :description, required: true %>
+  </div>
+
+  <div>
+    <%= form.label :priority, "Priority" %>
+    <%= form.select :priority,
+        [["Low", "low"], ["Medium", "medium"], ["High", "high"]],
+        { prompt: "Select priority" },
+        { required: true } %>
+  </div>
+
+  <div>
+    <%= form.submit "Submit Problem Report" %>
+  </div>
+<% end %>

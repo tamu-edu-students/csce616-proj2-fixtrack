@@ -52,9 +52,9 @@ group :development do
   gem "web-console"
 end
 
-gem "rspec-rails", "~> 8.0", groups: [:development, :test]
+gem "rspec-rails", "~> 8.0", groups: [ :development, :test ]
 
-gem "cucumber-rails", "~> 4.1", groups: [:development, :test]
+gem "cucumber-rails", "~> 4.1", groups: [ :development, :test ]
 
 gem "simplecov", "~> 1.3", group: :test
 

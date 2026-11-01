@@ -1,0 +1,2 @@
+module MaintenanceTicketsHelper
+end
