@@ -6,8 +6,24 @@ require_relative "../../app/queries/manager_ticket_queue"
 # A separate connection exercises real SQL without booting the incomplete Rails
 # model foundation or touching the application's development/test databases.
 module ManagerTicketQueueSpec
-  class Ticket < ActiveRecord::Base
+  class Record < ActiveRecord::Base
+    self.abstract_class = true
+  end
+
+  class User < Record
+    self.table_name = "queue_users"
+  end
+
+  class Equipment < Record
+    self.table_name = "queue_equipment"
+  end
+
+  class Ticket < Record
     self.table_name = "tickets"
+
+    belongs_to :equipment, class_name: "ManagerTicketQueueSpec::Equipment"
+    belongs_to :reporter, class_name: "ManagerTicketQueueSpec::User"
+    belongs_to :assigned_technician, class_name: "ManagerTicketQueueSpec::User", optional: true
   end
 end
 
@@ -16,17 +32,26 @@ RSpec.describe ManagerTicketQueue do
   let(:now) { Time.utc(2026, 10, 30, 12) }
 
   before(:context) do
-    ManagerTicketQueueSpec::Ticket.establish_connection(adapter: "sqlite3", database: ":memory:")
-    ManagerTicketQueueSpec::Ticket.connection.create_table(:tickets) do |t|
+    ManagerTicketQueueSpec::Record.establish_connection(adapter: "sqlite3", database: ":memory:")
+    connection = ManagerTicketQueueSpec::Record.connection
+    connection.create_table(:queue_users) { |t| t.string :name }
+    connection.create_table(:queue_equipment) { |t| t.string :name }
+    connection.create_table(:tickets) do |t|
       t.string :status
       t.string :priority
       t.integer :reporter_id
+      t.integer :equipment_id
+      t.integer :assigned_technician_id
       t.datetime :created_at
     end
   end
 
-  after(:context) { ManagerTicketQueueSpec::Ticket.remove_connection }
-  before { model.delete_all }
+  after(:context) { ManagerTicketQueueSpec::Record.remove_connection }
+  before do
+    model.delete_all
+    ManagerTicketQueueSpec::User.delete_all
+    ManagerTicketQueueSpec::Equipment.delete_all
+  end
 
   def create_ticket(status: "open", priority: "medium", created_at: now, reporter_id: 1)
     model.create!(status: status, priority: priority, created_at: created_at, reporter_id: reporter_id)
@@ -203,5 +228,52 @@ RSpec.describe ManagerTicketQueue do
 
     expect(statements.length).to eq(1)
     expect(statements.first).to include("LIMIT ?")
+  end
+
+  def association_read_count(scope)
+    statements = []
+    subscriber = lambda do |*args|
+      payload = args.last
+      statements << payload[:sql] if payload[:name] != "SCHEMA" && payload[:sql].start_with?("SELECT")
+    end
+
+    ActiveSupport::Notifications.subscribed(subscriber, "sql.active_record") do
+      result = described_class.new(scope: scope.preload(:equipment, :reporter, :assigned_technician))
+      result.tickets.each do |ticket|
+        ticket.equipment.name
+        ticket.reporter.name
+        ticket.assigned_technician&.name
+      end
+    end
+    statements.length
+  end
+
+  it "loads associations in a fixed number of queries for one or 25 tickets" do
+    reporter = ManagerTicketQueueSpec::User.create!(name: "Reporter")
+    technician = ManagerTicketQueueSpec::User.create!(name: "Technician")
+    equipment = ManagerTicketQueueSpec::Equipment.create!(name: "Pump")
+    tickets = Array.new(25) do
+      model.create!(status: "assigned", priority: "high", created_at: now,
+        reporter: reporter, equipment: equipment, assigned_technician: technician)
+    end
+
+    single_row_reads = association_read_count(model.where(id: tickets.first.id))
+    full_page_reads = association_read_count(model.all)
+
+    expect(single_row_reads).to eq(4)
+    expect(full_page_reads).to eq(single_row_reads)
+  end
+
+  it "keeps unassigned tickets in the results when preloading associations" do
+    reporter = ManagerTicketQueueSpec::User.create!(name: "Reporter")
+    equipment = ManagerTicketQueueSpec::Equipment.create!(name: "Pump")
+    unassigned = model.create!(status: "open", priority: "high", created_at: now,
+      reporter: reporter, equipment: equipment)
+    result = described_class.new(scope: model.preload(:equipment, :reporter, :assigned_technician))
+
+    expect(result.tickets).to eq([ unassigned ])
+    expect(result.tickets.first.assigned_technician).to be_nil
+    expect(result.tickets.first.equipment.name).to eq("Pump")
+    expect(result.tickets.first.reporter.name).to eq("Reporter")
   end
 end
