@@ -20,7 +20,7 @@ class ManagerTicketQueue
   end
 
   def next_page?
-    page_rows.length > PAGE_SIZE
+    page < MAX_PAGE && page_rows.length > PAGE_SIZE
   end
 
   def previous_page?

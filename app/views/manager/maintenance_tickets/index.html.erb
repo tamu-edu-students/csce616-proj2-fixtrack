@@ -1,3 +1,73 @@
-<h1>Manager ticket queue</h1>
+<% content_for :title, "Manager ticket queue | FixTrack" %>
 
-<p><%= pluralize(@tickets.length, "ticket") %> on this page.</p>
+<main class="ticket-queue" aria-labelledby="queue-title">
+  <h1 id="queue-title">Manager ticket queue</h1>
+
+  <%= form_with url: manager_maintenance_tickets_path, method: :get, class: "ticket-queue__filters" do %>
+    <div>
+      <%= label_tag :status, "Show tickets" %>
+      <%= select_tag :status, options_for_select([["Open", "open"], ["Resolved", "resolved"], ["All", "all"]], @queue.status) %>
+    </div>
+    <div>
+      <%= label_tag :sort, "Order by" %>
+      <%= select_tag :sort, options_for_select([["Priority first", "priority"], ["Newest first", "newest"], ["Oldest first", "oldest"]], @queue.sort) %>
+    </div>
+    <%= submit_tag "Apply", name: nil %>
+  <% end %>
+  <p>Open includes Open, Assigned, and In progress tickets.</p>
+
+  <% if @tickets.empty? %>
+    <% if @queue.page > 1 %>
+      <p>No tickets on this page.</p>
+      <%= link_to "Back to first page", manager_maintenance_tickets_path(status: @queue.status, sort: @queue.sort) %>
+    <% else %>
+      <p><%= { "open" => "No unresolved tickets.", "resolved" => "No resolved tickets.", "all" => "No tickets yet." }.fetch(@queue.status) %></p>
+      <% unless @queue.status == "all" %>
+        <%= link_to "View all tickets", manager_maintenance_tickets_path(status: "all", sort: @queue.sort) %>
+      <% end %>
+    <% end %>
+  <% else %>
+    <p><%= pluralize(@tickets.length, "ticket") %> on this page.</p>
+    <div class="ticket-queue__table-wrapper" role="region" aria-label="Ticket results" tabindex="0">
+      <table>
+        <caption>Maintenance tickets</caption>
+        <thead>
+          <tr>
+            <th scope="col">Ticket</th>
+            <th scope="col">Equipment</th>
+            <th scope="col">Reporter</th>
+            <th scope="col">Priority</th>
+            <th scope="col">Status</th>
+            <th scope="col">Assignee</th>
+            <th scope="col">Reported</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @tickets.each do |ticket| %>
+            <tr>
+              <th scope="row"><%= link_to "##{ticket.id} — #{ticket.title}", maintenance_ticket_path(ticket.id) %></th>
+              <td><%= ticket.equipment.name %> (<%= ticket.equipment.asset_identifier %>)</td>
+              <td><%= ticket.reporter.name %></td>
+              <td><%= ticket.priority.humanize %></td>
+              <td><%= ticket.status.humanize %></td>
+              <td><%= ticket.assigned_technician&.name || "Unassigned" %></td>
+              <td><%= time_tag ticket.created_at, format: :long %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+
+  <% if @queue.previous_page? || @queue.next_page? %>
+    <nav class="ticket-queue__pagination" aria-label="Ticket queue pages">
+      <% if @queue.previous_page? %>
+        <%= link_to "Previous", manager_maintenance_tickets_path(status: @queue.status, sort: @queue.sort, page: @queue.page - 1), rel: "prev" %>
+      <% end %>
+      <span>Page <%= @queue.page %></span>
+      <% if @queue.next_page? %>
+        <%= link_to "Next", manager_maintenance_tickets_path(status: @queue.status, sort: @queue.sort, page: @queue.page + 1), rel: "next" %>
+      <% end %>
+    </nav>
+  <% end %>
+</main>

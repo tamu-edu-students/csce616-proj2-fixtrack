@@ -160,6 +160,13 @@ RSpec.describe ManagerTicketQueue do
     expect(second_page.previous_page?).to be true
   end
 
+  it "does not offer a next page beyond the practical page cap" do
+    stub_const("ManagerTicketQueue::MAX_PAGE", 1)
+    26.times { create_ticket }
+
+    expect(queue.next_page?).to be false
+  end
+
   it "filters and orders before paginating" do
     26.times { create_ticket(status: "resolved") }
     active = Array.new(26) { |index| create_ticket(created_at: now + index) }

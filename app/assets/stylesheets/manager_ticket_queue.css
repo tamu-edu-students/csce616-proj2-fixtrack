@@ -1,0 +1,53 @@
+.ticket-queue {
+  max-width: 80rem;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.ticket-queue__filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 1rem;
+}
+
+.ticket-queue__filters label {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.ticket-queue__filters select,
+.ticket-queue__filters input[type="submit"] {
+  padding: 0.5rem;
+}
+
+.ticket-queue__table-wrapper {
+  overflow-x: auto;
+}
+
+.ticket-queue table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ticket-queue caption {
+  text-align: left;
+  font-weight: bold;
+  padding: 0.75rem 0;
+}
+
+.ticket-queue th,
+.ticket-queue td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #d1d5db;
+  text-align: left;
+  vertical-align: top;
+}
+
+.ticket-queue__pagination {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1rem;
+}
